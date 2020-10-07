@@ -1,9 +1,10 @@
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="f" uri="http://example.com/functions" %>
+<jsp:useBean id="meals" scope="request" type="java.util.List"/>
+
 <html lang="ru">
-
-
 <head>
     <title>Meals</title>
 </head>
@@ -15,7 +16,6 @@
     }
 
     th {
-
         border-collapse: collapse;
         font-weight: bolder;
     }
@@ -26,7 +26,7 @@
 <hr>
 <h2>Meals</h2>
 
-<a href="#">Add Meal</a>
+<a href="meal?action=create">Add Meal</a>
 <br>
 <br>
 <table style="width:30%">
@@ -44,19 +44,16 @@
         <th></th>
         <th></th>
     </tr>
-    <jsp:useBean id="meals" scope="request" type="java.util.List"/>
 
-    <c:set var = "dt" value = '<%= DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")%>'/>
-    <c:forEach var="variable" items="${meals}" >
-        <tr>
-            <td style="color: ${variable.excess ? 'red' : 'green'}">${dt.format(variable.dateTime)}</td>
-            <td style="color: ${variable.excess ? 'red' : 'green'}">${variable.description}</td>
-            <td style="color: ${variable.excess ? 'red' : 'green'}">${variable.calories}</td>
-            <td><a href="edit_meal.jsp">Update</a></td>
-            <td><a href="#">Delete</a></td>
+    <c:forEach var="meal" items="${meals}">
+        <tr style="color: ${meal.excess ? 'red' : 'green'}">
+            <td>${f:formatLocalDateTime(meal.dateTime)}</td>
+            <td>${meal.description}</td>
+            <td>${meal.calories}</td>
+            <td><a href="meal?action=update&id=${meal.id}">Update</a></td>
+            <td><a href="meal?action=delete&id=${meal.id}">Delete</a></td>
         </tr>
     </c:forEach>
-
 </table>
 </body>
 </html>
