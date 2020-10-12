@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -17,5 +18,18 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("forward to users");
         request.getRequestDispatcher("/users.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        log.debug("accept user id");
+        Enumeration<String> enumeration = request.getParameterNames();
+        while (enumeration.hasMoreElements()) {
+            System.out.println("parameter is " + enumeration.nextElement());
+        }
+        if (request.getParameter("action").equals("selectId")) {
+            SecurityUtil.setAuthUserId(Integer.parseInt(request.getParameter("id")));
+        }
+        response.sendRedirect("index.html");
     }
 }

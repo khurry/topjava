@@ -55,7 +55,9 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Collection<Meal> getAll(Integer userId) {
-        List<Meal> list = new ArrayList<>(repository.get(userId).values());
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        if (userMeals == null) return Collections.emptyList();
+        List<Meal> list = new ArrayList<>(userMeals.values());
         list.sort((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()));
         return list;
     }

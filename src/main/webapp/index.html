@@ -1,4 +1,4 @@
-<html lang="ru">
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Java Enterprise (Topjava)</title>
@@ -10,5 +10,16 @@
     <li><a href="users">Users</a></li>
     <li><a href="meals">Meals</a></li>
 </ul>
+
+<form method="post" action="users">
+    <input type="text" list="id" name="id">
+    <datalist id="id">
+        <option value="1">
+        <option value="2">
+    </datalist>
+    <input type="hidden" name="action" value="selectId">
+    <input type="submit" value="OK">
+</form>
+
 </body>
 </html>

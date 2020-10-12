@@ -3,14 +3,11 @@ package ru.javawebinar.topjava.repository.inmemory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import ru.javawebinar.topjava.model.AbstractNamedEntity;
-import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
@@ -33,7 +30,6 @@ public class InMemoryUserRepository implements UserRepository {
             repository.put(user.getId(), user);
             return user;
         }
-        // handle case: update, but not present in storage
         return repository.computeIfPresent(user.getId(), (id, oldUser) -> user);
     }
 
@@ -47,16 +43,16 @@ public class InMemoryUserRepository implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         List<User> result = new ArrayList<>(repository.values());
-        result.sort(Comparator.comparing(AbstractNamedEntity::getName));
+        result.sort((o1, o2) -> {
+            if (!o1.getName().equals(o2.getName())) return o1.getName().compareTo(o2.getName());
+            return o1.getEmail().compareTo(o2.getEmail());
+        });
         return result;
     }
 
     @Override
     public User getByEmail(String email) {
         log.info("getByEmail {}", email);
-        for (User user : repository.values()) {
-            if (user.getEmail().equals(email)) return user;
-        }
-        return null;
+        return repository.values().stream().filter(user -> user.getEmail().equals(email)).limit(1).findFirst().orElse(null);
     }
 }
