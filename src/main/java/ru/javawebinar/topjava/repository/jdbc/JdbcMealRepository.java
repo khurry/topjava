@@ -2,23 +2,19 @@ package ru.javawebinar.topjava.repository.jdbc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 public class JdbcMealRepository implements MealRepository {
@@ -72,7 +68,7 @@ public class JdbcMealRepository implements MealRepository {
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", id)
                 .addValue("user_id", userId);
-        return namedParameterJdbcTemplate.queryForObject("SELECT * FROM meals WHERE id = :id AND user_id = :user_id", map, ROW_MAPPER);
+        return DataAccessUtils.singleResult(namedParameterJdbcTemplate.query("SELECT * FROM meals WHERE id = :id AND user_id = :user_id", map, ROW_MAPPER));
     }
 
     @Override
