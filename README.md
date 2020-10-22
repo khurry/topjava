@@ -1,4 +1,5 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4896d8686f314577969bc3a2b070363f)](https://www.codacy.com/gh/khurry/topjava/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=khurry/topjava&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/khurry/topjava.svg?branch=master)](https://travis-ci.org/khurry/topjava)
 
 Java Enterprise Online Project 
 ===============================
