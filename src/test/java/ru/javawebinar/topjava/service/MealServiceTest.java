@@ -1,7 +1,13 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -10,9 +16,12 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
+import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -26,9 +35,41 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
 
     @Autowired
     private MealService service;
+
+    @Rule
+    public final TestName testName = new TestName();
+    @Rule
+    public final ExternalResource methodResult = new ExternalResource() {
+        long testTime;
+        @Override
+        protected void before() throws Throwable {
+            testTime = System.currentTimeMillis();
+        }
+
+        @Override
+        protected void after() {
+            long time = System.currentTimeMillis() - testTime;
+            log.debug(testName.getMethodName() + " took " + time + " ms");
+        }
+    };
+    @ClassRule
+    public static final ExternalResource classResult = new ExternalResource() {
+        long testTime;
+        @Override
+        protected void before() throws Throwable {
+            testTime = System.currentTimeMillis();
+        }
+
+        @Override
+        protected void after() {
+            long time = System.currentTimeMillis() - testTime;
+            log.debug(MealServiceTest.class.getSimpleName() + " took " + time + " ms");
+        }
+    };
 
     @Test
     public void delete() throws Exception {
