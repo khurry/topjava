@@ -4,26 +4,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.formatters.DateFormat;
+import ru.javawebinar.topjava.util.formatters.TimeFormat;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
-
-import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
-import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 @RestController
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,7 +22,7 @@ public class MealRestController extends AbstractMealController {
     static final String REST_URL = "/rest/meals";
 
     @Override
-    @DeleteMapping("/{id}}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         super.delete(id);
@@ -66,9 +57,11 @@ public class MealRestController extends AbstractMealController {
         return super.getAll();
     }
 
+    @Override
     @GetMapping("/filter")
-    public List<MealTo> getBetween(@RequestBody @DateTimeFormat LocalDateTime startDateTime, @RequestBody @DateTimeFormat LocalDateTime endDateTime) {
-        return super.getBetween(startDateTime.toLocalDate(), startDateTime.toLocalTime(), endDateTime.toLocalDate(), endDateTime.toLocalTime());
+    public List<MealTo> getBetween(@RequestParam(required = false) @DateFormat LocalDate startDate, @RequestParam(required = false) @TimeFormat LocalTime startTime,
+                                   @RequestParam(required = false) @DateFormat LocalDate endDate, @RequestParam(required = false) @TimeFormat LocalTime endTime) {
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 
 }
