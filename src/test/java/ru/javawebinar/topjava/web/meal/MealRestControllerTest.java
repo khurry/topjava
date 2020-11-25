@@ -3,34 +3,28 @@ package ru.javawebinar.topjava.web.meal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javawebinar.topjava.MealTestData;
-import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.service.UserService;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.SecurityUtil;
 import ru.javawebinar.topjava.web.json.JsonUtil;
-import ru.javawebinar.topjava.web.user.AdminRestController;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.TestUtil.readFromJson;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
@@ -94,15 +88,26 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getBetween() throws Exception {
-        List<MealTo> expected = MealsUtil.getTos(List.of(meal7, meal6, meal5, meal4), DEFAULT_CALORIES_PER_DAY);
-        expected.sort((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()));
-
-        perform(MockMvcRequestBuilders.get(REST_URL + "filter")
-                .param("startDateTime","2020-01-31T00:00:00")
-                .param("endDateTime", "2020-02-01T23:00:00"))
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", LocalDate.of(2020, 1, 31).toString())
+                .param("startTime", LocalTime.of(0, 0).toString())
+                .param("endDate", LocalDate.of(2020, 2, 1).toString())
+                .param("endTime", LocalTime.of(23, 0).toString());
+        perform(requestBuilder)
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MEALTO_MATCHER.contentJson(expected));
+                .andExpect(MEALTO_MATCHER.contentJson(MealsUtil.getTos(List.of(meal7, meal6, meal5, meal4), DEFAULT_CALORIES_PER_DAY)));
+    }
+    @Test
+    void getBetweenWithNull() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get(REST_URL + "filter")
+                .param("startDate", (String)null)
+                .param("startTime", (String)null)
+                .param("endDate", (String)null)
+                .param("endTime", (String)null);
+        perform(requestBuilder)
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MEALTO_MATCHER.contentJson(MealsUtil.getTos(meals, DEFAULT_CALORIES_PER_DAY)));
     }
 }

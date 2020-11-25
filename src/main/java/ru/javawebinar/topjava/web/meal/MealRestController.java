@@ -11,6 +11,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.formatters.DateFormat;
+import ru.javawebinar.topjava.util.formatters.TimeFormat;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -67,11 +69,11 @@ public class MealRestController extends AbstractMealController {
         return super.getAll();
     }
 
+    @Override
     @GetMapping("/filter")
-    public List<MealTo> getBetween(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime) {
-        List<MealTo> meals = super.getBetween(startDateTime.toLocalDate(), startDateTime.toLocalTime(), endDateTime.toLocalDate(), endDateTime.toLocalTime());
-        return meals;
+    public List<MealTo> getBetween(@RequestParam(required = false) @DateFormat LocalDate startDate, @RequestParam(required = false) @TimeFormat LocalTime startTime,
+                                   @RequestParam(required = false) @DateFormat LocalDate endDate, @RequestParam(required = false) @TimeFormat LocalTime endTime) {
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 
 }
