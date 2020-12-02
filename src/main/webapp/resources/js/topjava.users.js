@@ -41,5 +41,23 @@ $(function () {
             ]
         })
     };
+
+    $("#userDatatable").first().find("input[type=checkbox]").click(function () {
+        var checked = $(this).prop("checked");
+        var tr = $(this).closest("tr");
+        var id = tr.attr("id");
+        debugger
+        $.ajax({
+            type: "POST",
+            url: ctx.ajaxUrl + "enable",
+            data: {
+                id: id,
+                enabled: checked
+            }
+        }).done(function () {
+            updateTable();
+            successNoty("Changed");
+        });
+    })
     makeEditable();
 });
