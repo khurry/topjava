@@ -63,5 +63,16 @@ $(function () {
         }),
         updateTable: updateFilteredTable
     };
+    $(".dateTimePicker").datetimepicker({
+        // inline: true
+    });
+    $(".datePicker").datetimepicker({
+        timepicker: false,
+        format:'Y/m/d'
+    });
+    $(".timePicker").datetimepicker({
+        datepicker: false,
+        format:'H:i'
+    });
     makeEditable();
 });

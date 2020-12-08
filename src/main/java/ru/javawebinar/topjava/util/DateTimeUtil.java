@@ -32,10 +32,10 @@ public class DateTimeUtil {
     }
 
     public static @Nullable LocalDate parseLocalDate(@Nullable String str) {
-        return StringUtils.hasText(str) ? LocalDate.parse(str) : null;
+        return StringUtils.hasText(str) ? LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyy/MM/dd")) : null;
     }
 
     public static @Nullable LocalTime parseLocalTime(@Nullable String str) {
-        return StringUtils.hasText(str) ? LocalTime.parse(str) : null;
+        return StringUtils.hasText(str) ? LocalTime.parse(str, DateTimeFormatter.ofPattern("HH:mm")) : null;
     }
 }

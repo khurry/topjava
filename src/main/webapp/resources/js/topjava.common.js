@@ -13,19 +13,44 @@ function makeEditable() {
 function add() {
     $("#modalTitle").html(i18n["addTitle"]);
     form.find(":input").val("");
+
     $("#editRow").modal();
 }
 
 function updateRow(id) {
     form.find(":input").val("");
+
     $("#modalTitle").html(i18n["editTitle"]);
 
-    $.get(ctx.ajaxUrl + id, function (data) {
-        $.each(data, function (key, value) {
-            form.find("input[name='" + key + "']").val(value);
-        });
-        $('#editRow').modal();
-    });
+    var options = {
+        url: ctx.ajaxUrl + id,
+        converters: {
+            "text json":function(data){
+                data=JSON.parse(data);
+
+                var date = new Date(data.dateTime);
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var month = date.getMonth() + 1;
+                var days = date.getDate();
+                month = month < 10 ? '0'+month : month;
+                days = days < 10 ? '0'+days : days;
+                hours = hours ? hours : 12; // the hour '0' should be '12'
+                minutes = minutes < 10 ? '0'+minutes : minutes;
+                var strTime = hours + ':' + minutes;
+                data.dateTime = date.getFullYear() + "/"+ month + "/" + days + " " + strTime;
+                return data;
+            }
+        },
+        success: function (data) {
+            $.each(data, function (key, value) {
+                form.find("input[name='" + key + "']").val(value);
+                debugger;
+            });
+            $('#editRow').modal();
+        }
+    }
+    $.get(options);
 }
 
 function deleteRow(id) {

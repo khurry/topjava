@@ -20,7 +20,7 @@ public class DateTimeFormatters {
 
         @Override
         public String print(LocalDate lt, Locale locale) {
-            return lt.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            return lt.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         }
     }
 
@@ -33,7 +33,7 @@ public class DateTimeFormatters {
 
         @Override
         public String print(LocalTime lt, Locale locale) {
-            return lt.format(DateTimeFormatter.ISO_LOCAL_TIME);
+            return lt.format(DateTimeFormatter.ofPattern("HH:mm"));
         }
     }
 }
