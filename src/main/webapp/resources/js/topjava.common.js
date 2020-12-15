@@ -95,10 +95,17 @@ function successNoty(key) {
 
 function failNoty(jqXHR) {
     closeNoty();
-    var errorInfo = jqXHR.responseJSON;
+    var errType;
+    var errorInfo = JSON.parse(jqXHR.responseText);
+
+    if (errorInfo.type.toString()==="VALIDATION_ERROR") {
+        errType = "Validation error";
+    } else {
+        errType = errorInfo.type.toString();
+    }
     failedNote = new Noty({
         text: "<span class='fa fa-lg fa-exclamation-circle'></span> &nbsp;" + i18n["common.errorStatus"] + ": " + jqXHR.status +
-            "<br>" + errorInfo.type + "<br>" + errorInfo.detail,
+            "<br>" + errType + "<br>" + errorInfo.detail,
         type: "error",
         layout: "bottomRight"
     }).show();
